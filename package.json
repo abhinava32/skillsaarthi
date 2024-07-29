@@ -1,0 +1,26 @@
+{
+  "name": "skillsaarthi",
+  "version": "1.0.0",
+  "description": "An Application to connect skill trainees to skill training agencies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhinava32/skillsaarthi.git"
+  },
+  "keywords": [
+    "skill",
+    "skill-india",
+    "India",
+    "skillinida",
+    "youth"
+  ],
+  "author": "Abhinav Anand",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhinava32/skillsaarthi/issues"
+  },
+  "homepage": "https://github.com/abhinava32/skillsaarthi#readme"
+}
