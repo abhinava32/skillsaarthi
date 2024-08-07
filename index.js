@@ -3,8 +3,18 @@ const port = process.env.PORT;
 
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
-const server = app.listen(port, (err)=> {
+//DB CONNECTION
+const {connect} = require('./Config/sequalize');
+// connect();
+
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+
+app.use('/', require('./Routes/index'));
+
+app.listen(port, (err)=> {
     if(err){
         if(process.env.ENVIRONMENT === "Development"){
            return console.log("Unable to start ");
