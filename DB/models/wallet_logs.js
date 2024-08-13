@@ -1,9 +1,9 @@
 'use strict';
 const { Model, Sequelize } = require('sequelize');
 
-const sequalize = require('../../Config/sequalize');
+const sequelize = require('../../Config/sequelize');
 
-module.exports = sequelize.define('wallet_logs', {
+const wallet_logs = sequelize.define('wallet_logs', {
   wallet_log_id: {
     allowNull: false,
     autoIncrement: true,
@@ -47,3 +47,5 @@ wallet_logs.associate = (models) => {
     as:'wallet'
   });
 }
+
+module.exports = wallet_logs;

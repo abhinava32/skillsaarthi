@@ -1,8 +1,8 @@
 'use strict';
 const { Sequelize } = require('sequelize');
 
-const sequalize = require('../../Config/sequalize');
-module.exports = sequalize.define('orders', {
+const sequelize = require('../../Config/sequelize');
+const orders = sequelize.define('orders', {
   order_id: {
     allowNull: false,
     autoIncrement: true,
@@ -54,3 +54,5 @@ orders.associate = function(models){
     as:bought
   })
 };
+
+module.exports = orders;
