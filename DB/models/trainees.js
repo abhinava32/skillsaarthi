@@ -1,8 +1,8 @@
 'use strict';
 const { Model, Sequelize } = require('sequelize');
-const sequelize = require('../../Config/sequalize');
+const sequelize = require('../../Config/sequelize');
 
-module.exports = sequelize.define('trainees',{
+const trainees = sequelize.define('trainees',{
   trainee_id: {
     allowNull: false,
     autoIncrement: true,
@@ -118,7 +118,8 @@ module.exports = sequelize.define('trainees',{
 trainees.associate = function(models){
   trainees.belongsTo(models.agents,{
     foreignKey:'agent_id',
-    as:'agent'
+    as:'agent',
+    allowNull:true
   });
     // One-to-one relationship with Bought
   trainees.hasOne(models.boughts, {
@@ -128,3 +129,5 @@ trainees.associate = function(models){
   });
   
 };
+
+module.exports = trainees;

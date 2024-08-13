@@ -1,8 +1,8 @@
 'use strict';
 const { Sequelize } = require('sequelize');
-const sequalize = require('../../Config/sequalize');
+const sequelize = require('../../Config/sequelize');
 
-module.exports = sequalize.define('admins',{
+const admins = sequelize.define('admins',{
   admin_id: {
     allowNull: false,
     autoIncrement: true,
@@ -36,11 +36,13 @@ module.exports = sequalize.define('admins',{
     allowNull: false,
     type: Sequelize.DATE
   },
-  deletedAt: {
-    type: Sequelize.DATE
-  }
+  // deletedAt: {
+  //   type: Sequelize.DATE
+  // }
 },{
-  paranoid:true,
+  // paranoid:true,
   freezeTableName:true,
   modelName:'admins'
 });
+
+module.exports = admins;

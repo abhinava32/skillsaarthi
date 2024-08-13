@@ -1,8 +1,8 @@
 'use strict';
 const {  Model, Sequelize } = require('sequelize');
-const sequalize = require('../../Config/sequalize');
+const sequelize = require('../../Config/sequelize');
 
-module.exports = sequalize.define('agents',{
+const agents = sequelize.define('agents',{
   agent_id: {
     allowNull: false,
     autoIncrement: true,
@@ -107,3 +107,5 @@ agents.associate = function(models){
     as:'wallet'
   });
 }
+
+module.exports = agents;

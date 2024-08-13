@@ -6,7 +6,7 @@ const app = express();
 const bodyParser = require('body-parser');
 
 //DB CONNECTION
-const {connect} = require('./Config/sequalize');
+const {connect} = require('./Config/sequelize');
 // connect();
 
 app.use(bodyParser.urlencoded({extended:false}));

@@ -3,9 +3,9 @@ const {
   Sequelize
 } = require('sequelize');
 
-const sequalize = require('../../Config/sequalize');
+const sequelize = require('../../Config/sequelize');
 
-module.exports = sequalize.define('wallets', {
+const wallets = sequelize.define('wallets', {
   wallet_id: {
     allowNull: false,
     autoIncrement: true,
@@ -50,3 +50,5 @@ wallets.associate = (models) => {
     as:'logs'
   });
 }
+
+module.exports = wallets;
