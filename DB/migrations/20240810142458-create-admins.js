@@ -17,18 +17,26 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull:false,
+        validate:{
+          len: [10,10],
+          isNumeric: true
+        }
+      },
       email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull:false,
+        validate: {
+          isEmail: true
+        }
       },
       password: {
         type: Sequelize.STRING,
         allowNull:false
       },
-      phone: {
-        type: Sequelize.INTEGER,
-        allowNull:false
-      },
+      
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

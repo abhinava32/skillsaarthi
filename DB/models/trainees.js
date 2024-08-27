@@ -1,5 +1,5 @@
 'use strict';
-const { Model, Sequelize } = require('sequelize');
+const { Sequelize } = require('sequelize');
 const sequelize = require('../../Config/sequelize');
 
 const trainees = sequelize.define('trainees',{
@@ -14,12 +14,19 @@ const trainees = sequelize.define('trainees',{
     allowNull: false
   },
   phone: {
-    type: Sequelize.CHAR(10),
-    allowNull:false
+    type: Sequelize.STRING,
+    allowNull:false,
+    validate:{
+      len: [10,10],
+      isNumeric: true
+    }
   },
   email: {
     type: Sequelize.STRING,
-    allowNull:false
+    allowNull:false,
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
@@ -122,6 +129,12 @@ trainees.associate = function(models){
     allowNull:true
   });
     // One-to-one relationship with Bought
+  trainees.hasMany(models.carts, {
+    foreignKey: 'trainee_id',
+    as: 'cart',
+    allowNull: true // Allow `trainee_id` to be null in Bought table
+  });
+
   trainees.hasOne(models.boughts, {
     foreignKey: 'trainee_id',
     as: 'boughts',

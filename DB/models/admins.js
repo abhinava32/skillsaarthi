@@ -17,16 +17,24 @@ const admins = sequelize.define('admins',{
     type: Sequelize.STRING,
     allowNull: false
   },
+  phone: {
+    type: Sequelize.STRING,
+    allowNull:false,
+    validate:{
+      len: [10,10],
+      isNumeric: true
+    }
+  },
   email: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull:false,
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
     allowNull:false
-  },
-  phone: {
-    type: Sequelize.INTEGER
   },
   createdAt: {
     allowNull: false,

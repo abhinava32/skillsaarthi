@@ -13,12 +13,19 @@ const agencies = sequelize.define('agencies', {
     allowNull:false
   },
   phone: {
-    type: Sequelize.INTEGER,
-    allowNull:false
+    type: Sequelize.STRING,
+    allowNull:false,
+    validate:{
+      len: [10,10],
+      isNumeric: true
+    }
   },
   email: {
     type: Sequelize.STRING,
-    allowNull:false
+    allowNull:false,
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
@@ -47,6 +54,11 @@ agencies.associate = function(models){
     as:'order'
   });
   
+  agencies.hasMany(models.carts,{
+    foreignKey:'agency_id',
+    as:'cart'
+  });
+
   agencies.hasMany(models.boughts,{
     foreignKey:'agency_id',
     as:'bought'

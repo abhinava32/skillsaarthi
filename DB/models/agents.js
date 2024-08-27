@@ -14,12 +14,19 @@ const agents = sequelize.define('agents',{
     allowNull: false
   },
   phone: {
-    type: Sequelize.CHAR(10),
-    allowNull:false
+    type: Sequelize.STRING,
+    allowNull:false,
+    validate:{
+      len: [10,10],
+      isNumeric: true
+    }
   },
   email: {
     type: Sequelize.STRING,
-    allowNull:false
+    allowNull:false,
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
@@ -91,7 +98,6 @@ const agents = sequelize.define('agents',{
     type: Sequelize.DATE
   }
 },{
-  paranoid:true,
   freezeTableName:true,
   modelName:'agents'
 });

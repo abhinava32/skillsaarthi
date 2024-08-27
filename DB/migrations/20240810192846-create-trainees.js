@@ -14,16 +14,24 @@ module.exports = {
         allowNull: false
       },
       phone: {
-        type: Sequelize.CHAR(10),
-        allowNull:false
+        type: Sequelize.STRING,
+        allowNull:false,
+        validate:{
+          len: [10,10],
+          isNumeric: true
+        }
       },
       email: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull:false,
+        validate: {
+          isEmail: true
+        }
       },
       password: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull:false,
+        defaultValue:'password'
       },
       domicile: {
         type: Sequelize.ENUM('ANDHRA PRADESH', 'ARUNACHAL PRADESH', 'ASSAM', 'BIHAR', 'CHHATTISGARH', 
@@ -41,7 +49,7 @@ module.exports = {
         allowNull:false
       },
       gender: {
-        type: Sequelize.ENUM('M','F'),
+        type: Sequelize.ENUM('M','F','OTHERS'),
         allowNull:false
       }
       ,
@@ -54,15 +62,19 @@ module.exports = {
         allowNull:false
       },
       pincode: {
-        type: Sequelize.CHAR(6),
-        allowNull:false
+        type: Sequelize.STRING,
+        allowNull:false,
+        validate: {
+          isNumeric: true,
+          len: [6,6]
+        }
       },
       age: {
         type: Sequelize.SMALLINT,
         allowNull:false,
         validate:{
           min: 15,
-          max: 99
+          max: 80
         }
       },
       education: {
@@ -89,7 +101,7 @@ module.exports = {
       },
       isEnrolled:{
         type: Sequelize.BOOLEAN,
-        allowNull:false
+        defaultValue: '0'
       },
       agent_id: {
         type: Sequelize.INTEGER,
