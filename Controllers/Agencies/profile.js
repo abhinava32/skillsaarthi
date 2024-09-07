@@ -2,6 +2,8 @@ const Agency = require('../../DB/models/agencies');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 15;
+const { createClient } = require('ioredis');
+const redis = createClient();
 
 module.exports.logout = async (req,res) => {
     if(!req.user){
@@ -29,14 +31,14 @@ module.exports.signIn = async (req, res) => {
     })
 
     if(!agency){
-        return res.status(501).json({
+        return res.status(401).json({
             message: "Wrong Credentials 1"
         })
     }
 
     const isPasswordMatched = await bcrypt.compare(req.body.password, agency.password);
     if(!isPasswordMatched){
-        return res.status(501).json({
+        return res.status(401).json({
             message: "Incorrect Credentials"
         })
     }
@@ -57,6 +59,41 @@ module.exports.signIn = async (req, res) => {
         })
     }
     
+}
+
+module.exports.register = async (req, res) => {
+    if(req.user){
+        return res.status(401).json({
+            message: "User already logged in. Unauthorised !!"
+        });
+    }
+
+    const id = req.query.id;
+    const email = req.query.email;
+
+    
+    const storedId = await redis.get(`link:${email}`);
+    var token = jwt.sign({email}, process.env.JWT_SECRET);
+    if (storedId === id) {
+        await redis.del(`link:${email}`); // Delete Link after successful validation
+        res.cookie('agencyregistration', token, {
+            httpOnly: true, // Prevents JavaScript access to the cookie
+            secure: process.env.NODE_ENV === 'production', // Use Secure in production (requires HTTPS)
+            sameSite: 'Strict', // Adjust based on your needs
+            maxAge: 36000000 // 10 hour in milliseconds
+        });
+        return res.redirect('localhost:8500/home');
+    }
+    return false;
+      
+
+    console.log("id is",id,"and email is",email);
+    // console.log("reqest parameters: ",req.params);
+    return res.status(200).json({
+        message: "Agency registered Successfully!!"
+    })
+
+
 }
 
 module.exports.signUp = async (req, res) => {
@@ -80,7 +117,6 @@ module.exports.signUp = async (req, res) => {
     if(agency){
         return res.status(200).json({
             message: "Agency Created Successfully !!",
-            data: agency
         });
     }
 

@@ -28,11 +28,7 @@ module.exports = {
           isEmail: true
         }
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull:false,
-        defaultValue:'password'
-      },
+      
       domicile: {
         type: Sequelize.ENUM('ANDHRA PRADESH', 'ARUNACHAL PRADESH', 'ASSAM', 'BIHAR', 'CHHATTISGARH', 
           'GOA', 'GUJARAT', 'HARYANA', 'HIMACHAL PRADESH', 'JHARKHAND', 
@@ -95,9 +91,15 @@ module.exports = {
         ),
         allowNull:false
       },
-      photo: {
+      
+      aadhar: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          len: [12, 12],
+          isNumeric: true
+        },
+        defaultValue: '000000000000'
       },
       isEnrolled:{
         type: Sequelize.BOOLEAN,

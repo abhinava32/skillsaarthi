@@ -29,14 +29,14 @@ module.exports.signIn = async (req, res) => {
     })
 
     if(!admin){
-        return res.status(501).json({
+        return res.status(401).json({
             message: "Wrong Credentials"
         })
     }
 
     const isPasswordMatched = await bcrypt.compare(req.body.password, admin.password);
     if(!isPasswordMatched){
-        return res.status(501).json({
+        return res.status(401).json({
             message: "Incorrect Credentials"
         })
     }
@@ -81,7 +81,6 @@ module.exports.createProfile = async (req, res) => {
     if(admin){
         return res.status(200).json({
             message: "Admin Created Successfully !!",
-            data: admin
         });
     }
 

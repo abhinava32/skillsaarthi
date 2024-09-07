@@ -1,5 +1,5 @@
 const { createClient } = require('ioredis');
-const redis = createClient({ url: 'redis://<your-redis-uri>' });
+const redis = createClient();
 
 // Generate OTP and store it in Redis
 const generateOtp = async (userId) => {
@@ -9,13 +9,19 @@ const generateOtp = async (userId) => {
 };
 
 // Validate OTP
-const validateOtp = async (userId, inputOtp) => {
-  const storedOtp = await redis.get(`otp:${userId}`);
-  if (storedOtp === inputOtp) {
-    await redis.del(`otp:${userId}`); // Delete OTP after successful validation
-    return true;
+const validateOtp = async (userId, inputOtp, res) => {
+  try{
+    const storedOtp = await redis.get(`otp:${userId}`);
+    if (storedOtp === inputOtp) {
+      await redis.del(`otp:${userId}`); // Delete OTP after successful validation
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch(err){
+    return res.status(500).json({message: "Internal Server Error!"});
+  }
+  
 };
 
 module.exports = {generateOtp, validateOtp};

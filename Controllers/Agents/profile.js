@@ -29,13 +29,13 @@ module.exports.signIn = async (req, res) => {
     })
 
     if(!agent){
-        return res.status(501).json({
+        return res.status(401).json({
             message: "Wrong Credentials"
         })
     }
     const isPasswordMatched = await bcrypt.compare(req.body.password, agent.password);
     if(!isPasswordMatched){
-        return res.status(501).json({
+        return res.status(401).json({
             message: "Incorrect Credentials"
         })
     }
@@ -66,27 +66,16 @@ module.exports.createProfile = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(req.body.password, saltRounds);
+    const body = req.body;
+    body.password = hashed;
 
     console.log(req.body.password);
 
-    const agent = await Agent.create({
-        name:req.body.name,
-        phone:req.body.phone,
-        email:req.body.email,
-        password:hashed,
-        state:req.body.state,
-        district:req.body.district,
-        block:req.body.block,
-        pincode:req.body.pincode,
-        age:req.body.age,
-        profession:req.body.profession,
-        photo:req.body.photo
-    });
+    const agent = await Agent.create(body);
 
     if(agent){
         return res.status(200).json({
             message: "Agent Created Successfully !!",
-            data: agent
         });
     }
 

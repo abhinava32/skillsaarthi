@@ -28,10 +28,7 @@ const trainees = sequelize.define('trainees',{
       isEmail: true
     }
   },
-  password: {
-    type: Sequelize.STRING,
-    allowNull:false
-  },
+  
   domicile: {
     type: Sequelize.ENUM('ANDHRA PRADESH', 'ARUNACHAL PRADESH', 'ASSAM', 'BIHAR', 'CHHATTISGARH', 
       'GOA', 'GUJARAT', 'HARYANA', 'HIMACHAL PRADESH', 'JHARKHAND', 
@@ -100,9 +97,15 @@ const trainees = sequelize.define('trainees',{
     ),
     allowNull:false
   },
-  photo: {
+  
+  aadhar: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      len: [12, 12],
+      isNumeric: true
+    },
+    defaultValue: '000000000000'
   },
   isEnrolled:{
     type: Sequelize.BOOLEAN,

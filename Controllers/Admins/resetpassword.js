@@ -1,4 +1,4 @@
-const Agent = require('../../DB/models/agents');
+const Admins = require('../../DB/models/admins');
 const bcrypt = require('bcrypt');
 const { emailQueue } = require('../../Config/bullmq');
 const {generateOtp, validateOtp} = require('../otp');
@@ -12,25 +12,25 @@ const addEmailJob = async (data) => {
 module.exports.createOtp = async (req, res)=>{
     let otp;
     const email = req.body.email;
-    const agent = await Agent.findOne({
-        attributes: ['email','agent_id'],
+    const admin = await Admins.findOne({
+        attributes: ['email','admin_id'],
         where: {
             email: email
         }
     });
 
-    if(!agent){
+    if(!admin){
         return res.status(400).json({messge:"Email does not exists"});
     }
    
 
-    generateOtp(agent.agent_id).then(otpReceived => {
+    generateOtp(admin.admin_id).then(otpReceived => {
         otp = otpReceived;
         
         const data = {
             otp,
             reason: "Reset Password",
-            email:agent.email
+            email:admin.email
         };
         addEmailJob(data);
         return res.status(200).json({
@@ -41,20 +41,20 @@ module.exports.createOtp = async (req, res)=>{
 
 module.exports.verifyOtp = async (req, res)=>{
     const email = req.body.email;
-    const agent = await Agent.findOne({
-        attributes: ['email','agent_id'],
+    const admin = await Admins.findOne({
+        attributes: ['email','admin_id'],
         where: {
             email: email
         }
     });
 
-    if(!agent){
+    if(!admin){
         return res.status(400).json({messge:"Email does not exists"});
     }
 
     validateOtp(agent.agent_id, req.body.otp.toString()).then(isValid => {
         if(isValid){
-            var token = jwt.sign({user_type:"agent", name: agent.name, id: agent.agent_id}, process.env.JWT_SECRET);
+            var token = jwt.sign({user_type:"admin", name: admin.name, id: admin.admin_id}, process.env.JWT_SECRET);
             res.cookie('otp', token, {
                 httpOnly: true, // Prevents JavaScript access to the cookie
                 secure: process.env.NODE_ENV === 'production', // Use Secure in production (requires HTTPS)
@@ -85,9 +85,9 @@ module.exports.newPassword = async (req, res) => {
             const token = await jwt.verify(req.cookies.otp, process.env.JWT_SECRET);
             if(token && token.id === req.user.id){
                 const hashed = await bcrypt.hash(req.body.password, saltRounds);
-                const agent = await Agent.findByPk(token.id);
-                agent.password =  hashed;
-                await agent.save();  
+                const admin = await Admins.findByPk(token.id);
+                admin.password =  hashed;
+                await admin.save();  
                 
                 return res.status(200).json({
                     message: "Changed password Successfully !!"
@@ -100,7 +100,7 @@ module.exports.newPassword = async (req, res) => {
         
     }
     return res.status(403).json({
-        message: "Access Forbidden!! Agent not logged in"
+        message: "Access Forbidden!! Admin not logged in"
     });
 }
     

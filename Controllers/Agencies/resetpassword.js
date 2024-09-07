@@ -1,4 +1,4 @@
-const Agent = require('../../DB/models/agents');
+const Agencies = require('../../DB/models/agencies');
 const bcrypt = require('bcrypt');
 const { emailQueue } = require('../../Config/bullmq');
 const {generateOtp, validateOtp} = require('../otp');
@@ -12,25 +12,25 @@ const addEmailJob = async (data) => {
 module.exports.createOtp = async (req, res)=>{
     let otp;
     const email = req.body.email;
-    const agent = await Agent.findOne({
-        attributes: ['email','agent_id'],
+    const agency = await Agencies.findOne({
+        attributes: ['email','agency_id'],
         where: {
             email: email
         }
     });
 
-    if(!agent){
+    if(!agency){
         return res.status(400).json({messge:"Email does not exists"});
     }
    
 
-    generateOtp(agent.agent_id).then(otpReceived => {
+    generateOtp(agency.agency_id).then(otpReceived => {
         otp = otpReceived;
         
         const data = {
             otp,
             reason: "Reset Password",
-            email:agent.email
+            email:agency.email
         };
         addEmailJob(data);
         return res.status(200).json({
@@ -41,20 +41,20 @@ module.exports.createOtp = async (req, res)=>{
 
 module.exports.verifyOtp = async (req, res)=>{
     const email = req.body.email;
-    const agent = await Agent.findOne({
-        attributes: ['email','agent_id'],
+    const agency = await Agencies.findOne({
+        attributes: ['email','agency_id'],
         where: {
             email: email
         }
     });
 
-    if(!agent){
+    if(!agency){
         return res.status(400).json({messge:"Email does not exists"});
     }
 
-    validateOtp(agent.agent_id, req.body.otp.toString()).then(isValid => {
+    validateOtp(agency.agency_id, req.body.otp.toString()).then(isValid => {
         if(isValid){
-            var token = jwt.sign({user_type:"agent", name: agent.name, id: agent.agent_id}, process.env.JWT_SECRET);
+            var token = jwt.sign({user_type:"agency", name: agency.name, id: agency.agency_id}, process.env.JWT_SECRET);
             res.cookie('otp', token, {
                 httpOnly: true, // Prevents JavaScript access to the cookie
                 secure: process.env.NODE_ENV === 'production', // Use Secure in production (requires HTTPS)
@@ -80,14 +80,14 @@ module.exports.newPassword = async (req, res) => {
         })
     }
 
-    if(req.user && req.user.user_type==='agent'){
+    if(req.user && req.user.user_type==='agency'){
         try {
             const token = await jwt.verify(req.cookies.otp, process.env.JWT_SECRET);
             if(token && token.id === req.user.id){
                 const hashed = await bcrypt.hash(req.body.password, saltRounds);
-                const agent = await Agent.findByPk(token.id);
-                agent.password =  hashed;
-                await agent.save();  
+                const agency = await Agencies.findByPk(token.id);
+                agency.password =  hashed;
+                await agency.save();  
                 
                 return res.status(200).json({
                     message: "Changed password Successfully !!"

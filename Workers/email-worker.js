@@ -2,14 +2,25 @@ const { connection } = require('../Config/bullmq');
 const { Worker } = require('bullmq');
 
 const {newOTP} = require('../Mailer/otpMailer');
+const {newLink} = require('../Mailer/linkMailer');
 
 const emailWorker = new Worker('emailQueue', async (job)=> {
-    try {
-        
-        await newOTP(job.data);
-      } catch (error) {
-        console.error("Error processing job:", error);
-      }
+  if(job.name === 'send-otp'){
+    try {    
+      await newOTP(job.data);
+    } 
+    catch (error) {
+      console.error("Error processing job:", error);
+    }
+  }
+  else if(job.name === 'send-link'){
+    try {    
+      await newLink(job.data);
+    } 
+    catch (error) {
+      console.error("Error processing job:", error);
+    }
+  }
     
 }, {connection})
 
