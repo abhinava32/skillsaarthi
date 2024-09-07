@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize');
 const sequelize = require('../../Config/sequelize');
 
-const carts = sequelize.define({
+const carts = sequelize.define('carts',{
   cart_id: {
     allowNull: false,
     autoIncrement: true,
