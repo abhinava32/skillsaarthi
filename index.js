@@ -4,15 +4,16 @@ const port = process.env.PORT;
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-
-//DB CONNECTION
-const {connect} = require('./Config/sequalize');
-// connect();
+const { checkAuth } = require('./Middlewares/auth');
+const cookieParser = require('cookie-parser'); 
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
-app.use('/', require('./Routes/index'));
+const {emailWorker} = require('./Workers/email-worker');
+
+app.use('/', checkAuth ,require('./Routes/index'));
 
 app.listen(port, (err)=> {
     if(err){

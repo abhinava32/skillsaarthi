@@ -1,16 +1,21 @@
 'use strict';
 const { Sequelize } = require('sequelize');
-const  sequelize  = require('../../Config/sequelize');
-const agencies = sequelize.define('agencies', {
-  agency_id: {
+const sequelize = require('../../Config/sequelize');
+
+const admins = sequelize.define('admins',{
+  admin_id: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
     type: Sequelize.INTEGER
   },
+  accesslevel: {
+    type: Sequelize.ENUM('X','Y','Z'),
+    allowNull: false
+  },
   name: {
     type: Sequelize.STRING,
-    allowNull:false
+    allowNull: false
   },
   phone: {
     type: Sequelize.STRING,
@@ -39,32 +44,13 @@ const agencies = sequelize.define('agencies', {
     allowNull: false,
     type: Sequelize.DATE
   },
-  deletedAt: {
-    type: Sequelize.DATE
-  }
+  // deletedAt: {
+  //   type: Sequelize.DATE
+  // }
 },{
-  paranoid:true,
-  freezeTableName: true,
-  modelName: 'agencies'
+  // paranoid:true,
+  freezeTableName:true,
+  modelName:'admins'
 });
 
-agencies.associate = function(models){
-  agencies.hasMany(models.orders,{
-    foreignKey:'agency_id',
-    as:'order'
-  });
-  
-  agencies.hasMany(models.carts,{
-    foreignKey:'agency_id',
-    as:'cart'
-  });
-
-  agencies.hasMany(models.boughts,{
-    foreignKey:'agency_id',
-    as:'bought'
-  });
-  
-  
-};
-
-module.exports = agencies;
+module.exports = admins;
