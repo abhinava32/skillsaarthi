@@ -12,52 +12,70 @@ module.exports.logout = async (req,res) => {
         })
     }
 
-    res.cookie('auth',"",{maxAge:1});
+    res.cookie('auth', "", {
+        httpOnly: true, // Prevents JavaScript access to the cookie
+        secure: false,//process.env.NODE_ENV==='production', // Use Secure in production (requires HTTPS)
+        sameSite: 'Strict', // Adjust based on your needs
+        maxAge: 1, 
+        path: '/'
+    });
     return res.status(200).json({message:"Logged out Successfully!!"});
 
 }
 
 module.exports.signIn = async (req, res) => {
     if(req.user){
-        return res.status(400).json({
-            message: "User already logged in. Please logout first"
-        })
-    }
-
-    const agency = await Agency.findOne({
-        where:{
-            email: req.body.email
-        }
-    })
-
-    if(!agency){
-        return res.status(401).json({
-            message: "Wrong Credentials 1"
-        })
-    }
-
-    const isPasswordMatched = await bcrypt.compare(req.body.password, agency.password);
-    if(!isPasswordMatched){
-        return res.status(401).json({
-            message: "Incorrect Credentials"
-        })
-    }
-
-    else if(isPasswordMatched){
-
-        var token = jwt.sign({user_type:"agency", name: agency.name, id: agency.agency_id}, process.env.JWT_SECRET);
-        res.cookie('auth', token, {
-            httpOnly: true, // Prevents JavaScript access to the cookie
-            secure: process.env.NODE_ENV === 'production', // Use Secure in production (requires HTTPS)
-            sameSite: 'Strict', // Adjust based on your needs
-            maxAge: 36000000 // 10 hour in milliseconds
-        });
-
         return res.status(200).json({
-            message: "Agency Login successfull",
-            agency_name: agency.name,
+            message: "User already logged in. Please logout first",
+            name:req.user.name
         })
     }
+
+    console.log("got a request");
+    try{
+        const agency = await Agency.findOne({
+            where:{
+                email: req.body.email
+            }
+        })
+    
+        if(!agency){
+            return res.status(401).json({
+                message: "Wrong Credentials 1"
+            })
+        }
+    
+        const isPasswordMatched = await bcrypt.compare(req.body.password, agency.password);
+        if(!isPasswordMatched){
+            return res.status(401).json({
+                message: "Incorrect Credentials"
+            })
+        }
+    
+        else if(isPasswordMatched){
+    
+            var token = jwt.sign({user_type:"agency", name: agency.name, id: agency.agency_id}, process.env.JWT_SECRET);
+            res.cookie('auth', token, {
+                httpOnly: true, // Prevents JavaScript access to the cookie
+                secure: false,//process.env.NODE_ENV==='production', // Use Secure in production (requires HTTPS)
+                sameSite: 'Strict', // Adjust based on your needs
+                maxAge: 36000000, // 10 hour in milliseconds
+                path: '/'
+            });
+    
+            return res.status(200).json({
+                message: "Agency Login successfull",
+                name: agency.name,
+                user_type:"agency"
+            })
+        }
+
+    }
+    catch(err){
+        console.log(err);
+    }
+
+    
     
 }
 
@@ -82,7 +100,7 @@ module.exports.register = async (req, res) => {
             sameSite: 'Strict', // Adjust based on your needs
             maxAge: 36000000 // 10 hour in milliseconds
         });
-        return res.redirect('localhost:8500/home');
+        return res.redirect('localhost:3000/');
     }
     return false;
       
