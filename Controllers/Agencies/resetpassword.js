@@ -30,7 +30,7 @@ module.exports.createOtpPhone = async (req, res) => {
   }
 
   const token = jwt.sign(
-    { phone, generated: true, validated: false },
+    { phone, id: agency_id, generated: true, validated: false },
     process.env.JWT_SECRET
   );
   res.cookie("phoneOtp", token, {
@@ -82,7 +82,7 @@ module.exports.createOtpEmail = async (req, res) => {
     };
     addEmailJob(data);
     const token = jwt.sign(
-      { email, generated: true, validated: false },
+      { email, id: agency.agency_id, generated: true, validated: false },
       process.env.JWT_SECRET
     );
     res.cookie("emailOtp", token, {
@@ -94,42 +94,6 @@ module.exports.createOtpEmail = async (req, res) => {
     });
     return res.status(200).json({
       message: "OTP Sent to the mail if registered",
-    });
-  });
-};
-
-module.exports.verifyOtp = async (req, res) => {
-  const email = req.body.email;
-  const agency = await Agencies.findOne({
-    attributes: ["email", "agency_id"],
-    where: {
-      email: email,
-    },
-  });
-
-  if (!agency) {
-    return res.status(400).json({ messge: "Email does not exists" });
-  }
-
-  validateOtp(agency.agency_id, req.body.otp.toString()).then((isValid) => {
-    if (isValid) {
-      var token = jwt.sign(
-        { user_type: "agency", name: agency.name, id: agency.agency_id },
-        process.env.JWT_SECRET
-      );
-      res.cookie("otp", token, {
-        httpOnly: true, // Prevents JavaScript access to the cookie
-        secure: process.env.NODE_ENV === "production", // Use Secure in production (requires HTTPS)
-        sameSite: "Strict", // Adjust based on your needs
-        maxAge: 36000000, // 10 hour in milliseconds
-      });
-
-      return res.status(200).json({
-        message: "OTP IS VALID",
-      });
-    }
-    return res.status(403).json({
-      message: "OTP is invalid",
     });
   });
 };

@@ -16,6 +16,7 @@ const validateOtp = async (userId, inputOtp, res) => {
       await redis.del(`otp:${userId}`); // Delete OTP after successful validation
       return true;
     }
+
     return false;
   } catch (err) {
     return res.status(500).json({ message: "Internal Server Error!" });

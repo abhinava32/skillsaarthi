@@ -91,13 +91,10 @@ module.exports.verifyOtpEmail = async (req, res) => {
     res.status(500).json({ message: "OTP Expired, Please send new otp " });
   }
   const token = await jwt.verify(req.cookies.emailOtp, process.env.JWT_SECRET);
-  if (
-    validateOtp(token.email, req.body.otp, res) &&
-    token.generated &&
-    !token.validated
-  ) {
-    const newToken = await jwt.sign(
-      { email: token.email, generated: true, validated: true },
+  const validation = await validateOtp(token.id, req.body.otp, res);
+  if (validation && token.generated && !token.validated) {
+    const newToken = jwt.sign(
+      { email: token.email, id: token.id, generated: true, validated: true },
       process.env.JWT_SECRET
     );
     res.cookie("emailOtp", newToken, {
@@ -122,12 +119,12 @@ module.exports.verifyOtpPhone = async (req, res) => {
   }
   const token = await jwt.verify(req.cookies.phoneOtp, process.env.JWT_SECRET);
   if (
-    validateOtp(token.phone, req.body.otp, res) &&
+    validateOtp(token.agency_id, req.body.otp, res) &&
     token.generated &&
     !token.validated
   ) {
-    const newToken = await jwt.sign(
-      { phone: token.phone, generated: true, validated: true },
+    const newToken = jwt.sign(
+      { phone, id: token.id, generated: true, validated: true },
       process.env.JWT_SECRET
     );
     res.cookie("phoneOtp", newToken, {
@@ -182,12 +179,8 @@ module.exports.sendAadharOtp = async (req, res) => {
     .request(options)
     .then(async function (response) {
       const reference_id = response.data.data.reference_id; // Extract reference_id
-      console.log("Reference ID:", reference_id); // Check if it exists
 
-      // Save the reference_id in Redis
       await redis.set(`aadhar:${aadhar}`, reference_id);
-      console.log("Redis key updated with reference ID");
-
       const token = await jwt.sign(
         { aadhar, generated: true, verified: false },
         process.env.JWT_SECRET
@@ -248,7 +241,6 @@ module.exports.verifyAadharOtp = async (req, res) => {
   axios
     .request(options)
     .then(async function (response) {
-      console.log(response.data);
       if (res.code === 200) {
         if (res.data.message === "Aadhaar Card Exists") {
           const newToken = jwt.sign(
