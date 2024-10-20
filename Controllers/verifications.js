@@ -87,17 +87,17 @@ module.exports.sendOtpPhone = (req, res) => {
 };
 
 module.exports.verifyOtpEmail = async (req, res) => {
-  if (!req.cookies || !req.cookies?.emailOtp) {
+  if (!req.cookies || !req.cookies?.otp) {
     res.status(500).json({ message: "OTP Expired, Please send new otp " });
   }
-  const token = await jwt.verify(req.cookies.emailOtp, process.env.JWT_SECRET);
+  const token = await jwt.verify(req.cookies.otp, process.env.JWT_SECRET);
   const validation = await validateOtp(token.id, req.body.otp, res);
   if (validation && token.generated && !token.validated) {
     const newToken = jwt.sign(
       { email: token.email, id: token.id, generated: true, validated: true },
       process.env.JWT_SECRET
     );
-    res.cookie("emailOtp", newToken, {
+    res.cookie("otp", newToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
@@ -114,20 +114,20 @@ module.exports.verifyOtpEmail = async (req, res) => {
 };
 
 module.exports.verifyOtpPhone = async (req, res) => {
-  if (!req.cookies || !req.cookies?.phoneOtp) {
+  if (!req.cookies || !req.cookies?.otp) {
     res.status(500).json({ message: "OTP Expired, Please send new otp " });
   }
-  const token = await jwt.verify(req.cookies.phoneOtp, process.env.JWT_SECRET);
+  const token = await jwt.verify(req.cookies.otp, process.env.JWT_SECRET);
   if (
     validateOtp(token.agency_id, req.body.otp, res) &&
     token.generated &&
     !token.validated
   ) {
     const newToken = jwt.sign(
-      { phone, id: token.id, generated: true, validated: true },
+      { phone: token.phone, id: token.id, generated: true, validated: true },
       process.env.JWT_SECRET
     );
-    res.cookie("phoneOtp", newToken, {
+    res.cookie("otp", newToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
