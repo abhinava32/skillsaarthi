@@ -1,4 +1,8 @@
-const Trainee = require("../../DB/models/trainees");
+const db = require("../../DB/models");
+
+const Trainee = db.trainees;
+const Cart = db.carts;
+const Bought = db.boughts;
 
 module.exports.getTraineeList = async (req, res) => {
   if (!req.user || req.user.user_type !== "agency") {
@@ -11,30 +15,36 @@ module.exports.getTraineeList = async (req, res) => {
 
   try {
     const candidates = await Trainee.findAll({
-      attributes: [
-        "trainee_id",
-        "name",
-        "phone",
-        "gender",
-        "physically_challenged",
-        "pincode",
-        "domicile",
-      ],
+      attributes: { exclude: ["email", "aadhar"] },
       where: { pincode: pincode },
+      include: [
+        {
+          model: Bought,
+          as: "agencyThatBought",
+          required: false, // This makes it an outer join
+        },
+      ],
     });
-    console.log("list>> ", candidates);
+
     if (candidates) {
       const candidateList = candidates.map((candidate) => ({
         id: candidate.trainee_id,
         name: candidate.name,
-        phone:
+        domicile: candidate.domicile,
+        physically_challenged: candidate.physically_challenged,
+        gender: candidate.gender,
+        district: candidate.district,
+        block: candidate.block,
+        pincode: candidate.pincode,
+        age: candidate.age,
+        education: candidate.education,
+        agent_id: candidate.agent_id,
+        religion: candidate.religion,
+        isEnrolled: candidate.isEnrolled,
+        Phone:
           candidate.phone.substring(0, 2) +
           "******" +
           candidate.phone.substring(8, 10),
-        gender: candidate.gender,
-        physically_challenged: candidate.physically_challenged,
-        pincode: candidate.pincode,
-        domicile: candidate.domicile,
       }));
 
       return res.status(200).json({

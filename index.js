@@ -16,6 +16,7 @@ const bodyParser = require("body-parser");
 const { checkAuth } = require("./Middlewares/auth");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const db = require("./DB/models");
 
 /***************************************************************************************************************************** */
 //                                              Middlewares

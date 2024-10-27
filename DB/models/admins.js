@@ -1,56 +1,56 @@
-'use strict';
-const { Sequelize } = require('sequelize');
-const sequelize = require('../../Config/sequelize');
+"use strict";
+const { Sequelize } = require("sequelize");
 
-const admins = sequelize.define('admins',{
-  admin_id: {
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-    type: Sequelize.INTEGER
-  },
-  accesslevel: {
-    type: Sequelize.ENUM('X','Y','Z'),
-    allowNull: false
-  },
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  phone: {
-    type: Sequelize.STRING,
-    allowNull:false,
-    validate:{
-      len: [10,10],
-      isNumeric: true
+module.exports = (sequelize) => {
+  const admins = sequelize.define(
+    "admins",
+    {
+      admin_id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      accesslevel: {
+        type: Sequelize.ENUM("X", "Y", "Z"),
+        allowNull: false,
+      },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          len: [10, 10],
+          isNumeric: true,
+        },
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    },
+    {
+      freezeTableName: true,
+      modelName: "admins",
     }
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull:false,
-    validate: {
-      isEmail: true
-    }
-  },
-  password: {
-    type: Sequelize.STRING,
-    allowNull:false
-  },
-  createdAt: {
-    allowNull: false,
-    type: Sequelize.DATE
-  },
-  updatedAt: {
-    allowNull: false,
-    type: Sequelize.DATE
-  },
-  // deletedAt: {
-  //   type: Sequelize.DATE
-  // }
-},{
-  // paranoid:true,
-  freezeTableName:true,
-  modelName:'admins'
-});
-
-module.exports = admins;
+  );
+  return admins;
+};

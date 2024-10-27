@@ -1,4 +1,6 @@
-const Agency = require("../../DB/models/agencies");
+const db = require("../../DB/models");
+const Agency = db.agencies;
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const saltRounds = 15;
@@ -30,7 +32,6 @@ module.exports.signIn = async (req, res) => {
     });
   }
 
-  console.log("got a request");
   try {
     const agency = await Agency.findOne({
       where: {
@@ -99,12 +100,6 @@ module.exports.register = async (req, res) => {
     return res.redirect("localhost:3000/");
   }
   return false;
-
-  console.log("id is", id, "and email is", email);
-  // console.log("reqest parameters: ",req.params);
-  return res.status(200).json({
-    message: "Agency registered Successfully!!",
-  });
 };
 
 module.exports.signUp = async (req, res) => {
