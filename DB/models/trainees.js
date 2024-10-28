@@ -73,7 +73,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       physically_challenged: {
-        type: Sequelize.ENUM("Y", "N"),
+        type: Sequelize.BOOLEAN,
         allowNull: false,
       },
       gender: {
