@@ -1,4 +1,4 @@
-const Agencies = require("../../DB/models/agencies");
+const Agencies = require("../../DB/models").agencies;
 const bcrypt = require("bcrypt");
 const { emailQueue, smsQueue } = require("../../Config/bullmq");
 const { generateOtp, validateOtp } = require("../otp");
