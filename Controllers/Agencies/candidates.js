@@ -28,7 +28,7 @@ module.exports.getTraineeList = async (req, res) => {
 
     if (candidates) {
       const candidateList = candidates.map((candidate) => ({
-        id: candidate.trainee_id,
+        trainee_id: candidate.trainee_id,
         name: candidate.name,
         domicile: candidate.domicile,
         physically_challenged: candidate.physically_challenged,

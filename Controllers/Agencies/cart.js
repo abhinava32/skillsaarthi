@@ -12,7 +12,7 @@ module.exports.addItem = async (req, res) => {
     });
   }
 
-  const trainee_id = req.body.id;
+  const trainee_id = req.body.trainee_id;
   const agency_id = req.user.id;
 
   try {
