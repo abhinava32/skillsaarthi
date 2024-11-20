@@ -65,7 +65,7 @@ module.exports.deleteItem = async (req, res) => {
   await Cart.destroy({
     where: {
       agency_id: req.user.id, // Replace with the specific agency ID
-      trainee_id: req.body.trainee,
+      trainee_id: req.body.trainee_id,
     },
   });
 };
